@@ -7,8 +7,8 @@
             <field name="model">product_analyzer.product_analyzer</field>
             <field name="arch" type="xml">
                 <tree>
+<!--                    <field name="default_code"/>-->
                     <field name="start_date"/>
-                    <field name="product_id"/>
                 </tree>
             </field>
         </record>
@@ -23,7 +23,7 @@
                             <group colspan="2" col="2">
                                 <separator string="Form" colspan="3"/>
                                 <field name="start_date"/>
-                                <field name="product_id"/>
+
                             </group>
                         </group>
                         <field name="sheet_id"/>
@@ -38,6 +38,7 @@
             <field name="model">product_analyzer.product_analyzer.sheet</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
+                    <field name="product_id"/>
                     <field name="sku"/>
                     <field name="title"/>
 <!--                    <field name="start_date"/>-->
