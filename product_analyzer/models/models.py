@@ -3,27 +3,21 @@
 from odoo import models, fields, api
 import datetime
 from dateutil import relativedelta
+import random
 
 
 class ProductAnalyzer(models.Model):
     _name = 'product_analyzer.product_analyzer'
     _description = 'product_analyzer'
 
+    # default_code = fields.Char(size=64, required=True, index=True)
+    # default_code = fields.Integer('Internal Code', readonly=True,
+                                  # compute='code',
+                                  # default=random.randint(1000, 9000)
+                                  # )
     sheet_id = fields.One2many('product_analyzer.product_analyzer.sheet', 'sheet_list')
-    # value = fields.Integer()
-    # value2 = fields.Float(compute="_value_pc", store=True)
-    # description = fields.Text()
     start_date = fields.Date(string='Order history start date:',
                              default=datetime.date.today() - relativedelta.relativedelta(months=1))
-    product_id = fields.Many2one('product.product', string='Product')
-
-    # @api.depends('value')
-    # def _value_pc(self):
-    #     for record in self:
-    #         record.value2 = float(record.value) / 100
-
-
-
 
 
 class ProductAnalyzerSheet(models.Model):
@@ -31,6 +25,7 @@ class ProductAnalyzerSheet(models.Model):
     _description = 'product_analyzer_sheet'
 
     sheet_list = fields.Many2one('product_analyzer.product_analyzer')
+    product_id = fields.Many2one('product.product', string='Product')
     sku = fields.Char(string='SKU')
     title = fields.Char(string='Title')
     direct = fields.Integer(string='Direct')
