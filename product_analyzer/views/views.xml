@@ -4,7 +4,7 @@
 
         <record model="ir.ui.view" id="product_analyzer_list_view">
             <field name="name">product.analyzer.tree</field>
-            <field name="model">product_analyzer.product_analyzer</field>
+            <field name="model">product_analyzer</field>
             <field name="arch" type="xml">
                 <tree>
 <!--                    <field name="default_code"/>-->
@@ -15,35 +15,35 @@
 
         <record model="ir.ui.view" id="product_analyzer_form_view">
             <field name="name">product.analyzer.form</field>
-            <field name="model">product_analyzer.product_analyzer</field>
+            <field name="model">product_analyzer</field>
             <field name="arch" type="xml">
                 <form string="Idea form">
                     <sheet>
                         <group colspan="4">
-                            <group colspan="2" col="2">
+                            <group colspan="2">
                                 <separator string="Form" colspan="3"/>
                                 <field name="start_date"/>
-
+                                <field name="categ_id"/>
+                                <button string="Generate Sheet" class="btn-primary"/>
                             </group>
                         </group>
-                        <field name="sheet_id"/>
+                        <field name="line_ids"/>
                     </sheet>
-
                 </form>
             </field>
         </record>
 
         <record model="ir.ui.view" id="product_analyzer_sheet_list_view">
             <field name="name">product.analyzer.tree</field>
-            <field name="model">product_analyzer.product_analyzer.sheet</field>
+            <field name="model">product_analyzer.sheet</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
+                    <field name="categ_id" invisible="True"/>
                     <field name="product_id"/>
                     <field name="sku"/>
                     <field name="title"/>
-<!--                    <field name="start_date"/>-->
-                    <field name="replenishment"/>
                     <field name="direct"/>
+                    <field name="replenishment"/>
                     <field name="sold"/>
                     <field name="inventory"/>
                     <field name="demand"/>
@@ -61,7 +61,7 @@
 
         <record model="ir.actions.act_window" id="product_analyzer.action_window">
             <field name="name">Product Analyzer</field>
-            <field name="res_model">product_analyzer.product_analyzer</field>
+            <field name="res_model">product_analyzer</field>
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -89,7 +89,7 @@
         <!-- menu categories -->
 
         <menuitem name="Menu 1" id="product_analyzer.menu_1" parent="product_analyzer.menu_root"/>
-        <menuitem name="Menu 2" id="product_analyzer.menu_2" parent="product_analyzer.menu_root"/>
+<!--        <menuitem name="Menu 2" id="product_analyzer.menu_2" parent="product_analyzer.menu_root"/>-->
 
         <!-- actions -->
 

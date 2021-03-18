@@ -7,31 +7,36 @@ import random
 
 
 class ProductAnalyzer(models.Model):
-    _name = 'product_analyzer.product_analyzer'
+    _name = 'product_analyzer'
     _description = 'product_analyzer'
 
     # default_code = fields.Char(size=64, required=True, index=True)
     # default_code = fields.Integer('Internal Code', readonly=True,
-                                  # compute='code',
-                                  # default=random.randint(1000, 9000)
-                                  # )
-    sheet_id = fields.One2many('product_analyzer.product_analyzer.sheet', 'sheet_list')
-    start_date = fields.Date(string='Order history start date:',
+    # compute='code',
+    # default=random.randint(1000, 9000)
+    # )
+    categ_id = fields.Many2one('product.category', string='Product Category'
+                               # related='product_id.categ_id'
+                               )
+    line_ids = fields.One2many('product_analyzer.sheet', 'sheet_id')
+    start_date = fields.Date(string='Order history start date',
                              default=datetime.date.today() - relativedelta.relativedelta(months=1))
 
 
 class ProductAnalyzerSheet(models.Model):
-    _name = 'product_analyzer.product_analyzer.sheet'
+    _name = 'product_analyzer.sheet'
     _description = 'product_analyzer_sheet'
 
-    sheet_list = fields.Many2one('product_analyzer.product_analyzer')
-    product_id = fields.Many2one('product.product', string='Product')
-    sku = fields.Char(string='SKU')
-    title = fields.Char(string='Title')
-    direct = fields.Integer(string='Direct')
+    sheet_id = fields.Many2one('product_analyzer', required=True, auto_join=True)
+    categ_id = fields.Many2one(related='sheet_id.categ_id')
+    product_id = fields.Many2one('product.product', string='Product',
+                                 domain="[('categ_id', '=', categ_id)]")
+    sku = fields.Char(string='SKU', related='product_id.barcode')
+    title = fields.Char(string='Title', related='product_id.product_tmpl_id.name')
+    direct = fields.Float(string='Direct', related='product_id.outgoing_qty')
     replenishment = fields.Integer(string='Replenishment')
-    sold = fields.Integer(string='Qty Sold')
-    inventory = fields.Integer(string='Inventory')
+    sold = fields.Integer(string='Qty Sold', compute='_compute_sold')
+    inventory = fields.Float(string='Inventory', related='product_id.qty_available')
     demand = fields.Integer(string='Demand')
     production = fields.Integer(string='Production', compute='_compute_production')
     actual_demand = fields.Integer(string='Actual Demand')
@@ -42,3 +47,8 @@ class ProductAnalyzerSheet(models.Model):
     def _compute_production(self):
         for record in self:
             record.production = record.demand - record.inventory
+
+    @api.depends('direct', 'replenishment')
+    def _compute_sold(self):
+        for record in self:
+            record.sold = record.direct + record.replenishment
