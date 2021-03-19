@@ -33,22 +33,24 @@ class ProductAnalyzerSheet(models.Model):
                                  domain="[('categ_id', '=', categ_id)]")
     sku = fields.Char(string='SKU', related='product_id.barcode')
     title = fields.Char(string='Title', related='product_id.product_tmpl_id.name')
-    direct = fields.Float(string='Direct', related='product_id.outgoing_qty')
-    replenishment = fields.Integer(string='Replenishment')
-    sold = fields.Integer(string='Qty Sold', compute='_compute_sold')
+    direct = fields.Float(string='Direct', related='product_id.stock_move_ids.product_uom_qty')
+    replenishment = fields.Float(string='Replenishment')
+    sold = fields.Float(string='Qty Sold', compute='_compute_production')
     inventory = fields.Float(string='Inventory', related='product_id.qty_available')
-    demand = fields.Integer(string='Demand')
-    production = fields.Integer(string='Production', compute='_compute_production')
-    actual_demand = fields.Integer(string='Actual Demand')
-    actual_production = fields.Integer(string='Actual Production')
+    demand = fields.Float(string='Demand')
+    production = fields.Float(string='Production', compute='_compute_production')
+    actual_demand = fields.Float(string='Actual Demand')
+    actual_production = fields.Float(string='Actual Production')
     completed = fields.Date(string='Completed')
 
     @api.depends('inventory', 'demand')
     def _compute_production(self):
         for record in self:
             record.production = record.demand - record.inventory
-
-    @api.depends('direct', 'replenishment')
-    def _compute_sold(self):
-        for record in self:
             record.sold = record.direct + record.replenishment
+
+
+    # @api.depends('direct', 'replenishment')
+    # def _compute_sold(self):
+    #     for record in self:
+
